@@ -1,6 +1,9 @@
 <template>
   <div class="bg-blue-100 text-center py-10">
     <img alt="Vue logo" src="./assets/logo.png" class="mx-auto">
+    <svg class="inline-svg-icon">
+      <use xlink:href="#day"></use>
+    </svg>
     <HelloWorld msg="Welcome to Your Vue.js App"/>
   </div>
 </template>
