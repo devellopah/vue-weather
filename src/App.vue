@@ -15,6 +15,34 @@ export default {
   name: 'App',
   components: {
     HelloWorld
+  },
+  data() {
+    return {
+      city: null,
+      region: null,
+      loc: null,
+    }
+  },
+  mounted() {
+    this.getLoc()
+  },
+  methods: {
+    async getLoc() {
+      try {
+        const { data } = await this.axios.get(`https://ipinfo.io?token=${process.env.VUE_APP_IPINFO_ACCESS_TOKEN}`)
+        this.city = data.city
+        this.region = data.region
+        this.loc = data.loc
+      } catch ({ response: { data } }) {
+        console.log(data)
+          this.$swal({
+            title: data.error.title,
+            text: data.error.message,
+            icon: 'error',
+            // confirmButtonText: 'Got it'
+          })
+      }
+    },
   }
 }
 </script>
