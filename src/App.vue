@@ -46,26 +46,27 @@ export default {
   name: 'App',
   data() {
     return {
-      // city: null,
-      // region: null,
-      // loc: null,
+      location: null,
+      forecast: null,
       resetTime: null,
-      city: 'Derbent',
-      region: 'Dagestan',
-      loc: '42.0678,48.2899'
     }
   },
   async mounted() {
-    // this.getLoc()
-    // await this.getWeather()
+    const coords = await this.getCoords()
+    const data = await this.getForecast(coords)
+
+    this.displayInfo(data)
+    this.storeInfo(data)
   },
   methods: {
-    async getLoc() {
+    async getCoords() {
       try {
-        const { data } = await this.axios.get(`https://ipinfo.io?token=${process.env.VUE_APP_IPINFO_ACCESS_TOKEN}`)
-        this.city = data.city
-        this.region = data.region
-        this.loc = data.loc
+        const {data: coords} = await this.axios.get(`https://ipinfo.io/loc?token=${process.env.VUE_APP_IPINFO_ACCESS_TOKEN}`)
+        // this.city = data.city
+        // this.region = data.region
+        // this.loc = data.loc
+        // this.location = { city, region, coords }
+        return coords
       } catch ({ response: { data } }) {
         console.log(data)
           this.$swal({
@@ -76,21 +77,14 @@ export default {
           })
       }
     },
-    async getWeather () {
+    async getForecast(coords) {
       try {
-        // const location = await this.getLocation()
-        const url = `${process.env.VUE_APP_WEATHER_API_URL}?loc=${this.loc}&unit=m`
+        const url = `${process.env.VUE_APP_WEATHER_API_URL}?coords=${coords}&unit=m`
         const { data } = await this.axios.get(url)
-        // sessionStorage.setItem('weather', JSON.stringify(currently))
-        // sessionStorage.setItem(
-        //   'nextReqAllowedFrom',
-        //   JSON.stringify(nextReqAllowedFrom.split(',')[1].trim())
-        // )
+        console.log(data)
+        return data
 
-        // this.displayWeather(currently)
-        console.log('data', data)
       } catch ({ response: { status, statusText, data } }) {
-        // console.clear()
         if (status === 429) {
           this.resetTime = data.resetTime
           this.$swal({
@@ -101,9 +95,32 @@ export default {
             // confirmButtonText: 'Ok, i got it (:'
           })
 
-          // this.displayWeather(JSON.parse(sessionStorage.getItem('weather')))
+          // this.displayInfo(JSON.parse(sessionStorage.getItem('weather')))
         }
       }
+    },
+    displayInfo(data) {
+      this.location = data.location
+      this.forecast = data.forecast
+      this.resetTime = data.resetTime
+      // this.temperature = Math.round(cur.temperature)
+      // this.summary = cur.summary
+      // this.humidity.val = (cur.humidity * 100).toFixed()
+      // this.cloudcover.val = (cur.cloudCover * 100).toFixed()
+
+      // const date = new Date(cur.time * 1000)
+
+      // this.date = {
+      //   month: date.toDateString().split(' ')[1],
+      //   day: date.getDate()
+      // }
+
+      // this.icon = cur.icon
+    },
+
+    storeInfo(data) {
+      sessionStorage.setItem('location', JSON.stringify(data.location))
+      sessionStorage.setItem('forecast', JSON.stringify(data.forecast))
     }
   }
 }
