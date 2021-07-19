@@ -1,19 +1,22 @@
 <template>
-<div id="app" class="app">
+<div class="app" v-if="isLoaded">
   <div class="app__top">
     <svg class="app__icon">
-      <use xlink:href="#day"></use>
+      <use :xlink:href="mainIcon"></use>
     </svg>
     <div class="app__data">
       <div class="app__temp">13</div>
       <div class="app__box">
-        <div class="app__summary">Partly Cloudy</div>
-        <div class="app__location">Derbent, Dagestan</div>
-      </div>
-        <div class="app__date">
-          <span class="app__month">May</span>
-          <span class="app__day">8</span>
+        <div class="app__summary">
+          {{forecast.weather_descriptions[0]}}
         </div>
+        <div class="app__location">
+          {{`${location.name}, ${location.country}`}}
+        </div>
+      </div>
+      <div class="app__date">
+        <span class="app__month">January</span>
+        <span class="app__day">1</span>
       </div>
     </div>
     <div class="app__bottom">
@@ -21,29 +24,89 @@
         <svg class="meta-block__icon" width="30" height="19">
           <use xlink:href="#wind-speed"></use>
         </svg>
-        <span>2</span><span>MPH</span>
+        <span>{{forecast.wind_speed}}</span><span>KM/H</span>
       </div>
       <div class="meta-block app__meta">
         <svg class="meta-block__icon" width="16" height="20">
           <use xlink:href="#humidity"></use>
         </svg>
-        <span>80</span><span>%</span>
+        <span>{{forecast.humidity}}</span><span>%</span>
       </div>
       <div class="meta-block app__meta">
         <svg class="meta-block__icon" width="22" height="22">
           <use xlink:href="#cloudiness"></use>
         </svg>
-        <span>39</span><span>%</span>
+        <span>{{forecast.cloudcover}}</span><span>%</span>
       </div>
     </div>
   </div>
+</div>
+<div class="app" v-else>
+<pacman-loader :loading="true"></pacman-loader>
+</div>
 </template>
 
 <script>
+import PacmanLoader from 'vue-spinner/src/PacmanLoader.vue'
 import dayjs from 'dayjs'
+
+const code2icon = {
+  113: ['#day', '#night'],
+  116: ['#cloudy-day-1', '#cloudy-night-1'],
+  119: ['#cloudy-day-2', '#cloudy-night-2'],
+  122: ['#cloudy-day-3', '#cloudy-night-3'],
+  143: ['#fog'],
+  176: ['#rainy-2', '#rainy-4'],
+  179: ['#snowy-2', '#snowy-4'],
+  182: ['#sleet'],
+  185: ['#sleet'],
+  200: ['#thunder'],
+  227: ['#snow-4'],
+  230: ['#snow-5'],
+  248: ['#fog'],
+  260: ['#fog'],
+  263: ['#rainy-2', '#rainy-4'],
+  266: ['#rainy-2', '#rainy-4'],
+  281: ['#sleet'],
+  284: ['#sleet'],
+  293: ['#rainy-4'],
+  296: ['#rainy-4'],
+  299: ['#rainy-3', '#rainy-5'],
+  302: ['#rainy-5'],
+  305: ['#rainy-3', '#rainy-5'],
+  308: ['#rainy-5'],
+  311: ['#rainy-2', '#rainy-4'],
+  314: ['#rainy-5'],
+  317: ['#rainy-4'],
+  320: ['#rainy-5'],
+  // snow
+  323: ['#snowy-2', '#snowy-4'],
+  326: ['#snowy-2', '#snowy-4'],
+  329: ['#snowy-5'],
+  332: ['#snowy-5'],
+  335: ['#snowy-1', '#snowy-5'],
+  338: ['#snowy-5'],
+  350: ['#snowy-4'],
+  353: ['#rainy-2', '#rainy-4'],
+  356: ['#rainy-1', '#rainy-5'],
+  359: ['#rainy-5'],
+  362: ['#rainy-2', '#rainy-4'],
+  365: ['#rainy-1', '#rainy-5'],
+  368: ['#snowy-2', '#snowy-4'],
+  371: ['#snowy-1', '#snowy-5'],
+  374: ['#snowy-2', '#snowy-4'],
+  377: ['#snowy-4'],
+  386: ['#thunder'],
+  389: ['#thunder'],
+  392: ['#thunder'],
+  395: ['#thunder'],
+}
 
 export default {
   name: 'App',
+  components: {
+    PacmanLoader
+  },
   data() {
     return {
       location: null,
@@ -51,21 +114,26 @@ export default {
       resetTime: null,
     }
   },
-  async mounted() {
-    const coords = await this.getCoords()
-    const data = await this.getForecast(coords)
+  computed: {
+    isLoaded() {
+      return Boolean(this.forecast)
+    },
+    mainIcon() {
+      const { weather_code, is_day } = this.forecast
 
-    this.displayInfo(data)
-    this.storeInfo(data)
+      return is_day == 'yes' || code2icon[weather_code].length === 1
+      ? code2icon[weather_code][0]
+      : code2icon[weather_code][1]
+    },
+  },
+  async mounted() {
+    // const coords = await this.getCoords()
+    // await this.getForecast(coords)
   },
   methods: {
     async getCoords() {
       try {
         const {data: coords} = await this.axios.get(`https://ipinfo.io/loc?token=${process.env.VUE_APP_IPINFO_ACCESS_TOKEN}`)
-        // this.city = data.city
-        // this.region = data.region
-        // this.loc = data.loc
-        // this.location = { city, region, coords }
         return coords
       } catch ({ response: { data } }) {
         console.log(data)
@@ -82,9 +150,11 @@ export default {
         const url = `${process.env.VUE_APP_WEATHER_API_URL}?coords=${coords}&unit=m`
         const { data } = await this.axios.get(url)
         console.log(data)
-        return data
+        this.displayInfo(data)
+        this.storeInfo(data)
 
       } catch ({ response: { status, statusText, data } }) {
+        console.log('error data', data)
         if (status === 429) {
           this.resetTime = data.resetTime
           this.$swal({
@@ -131,7 +201,7 @@ export default {
 @import "tailwindcss/tailwind.css";
 body {
   height: 100vh;
-  background-color: #b0c4de;
+  background: #5dc596;
   padding: 0 8px;
   margin: 0;
   display: -webkit-box;
@@ -156,6 +226,7 @@ button {
   width: 100%;
   max-width: 24.3125em;
   height: 29em;
+  background: azure;
   -webkit-box-shadow: 10px 18px 20px 1px rgba(0, 0, 0, 0.15);
   box-shadow: 10px 18px 20px 1px rgba(0, 0, 0, 0.15);
   border-radius: 0.625em;
@@ -166,6 +237,8 @@ button {
   -webkit-box-direction: normal;
   -ms-flex-direction: column;
   flex-direction: column;
+  align-items: center;
+  justify-content: center;
 }
 .app__top {
   height: 20.5em;
