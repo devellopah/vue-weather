@@ -1,22 +1,24 @@
 <template>
-<div class="app" v-if="isLoaded">
-  <div class="app__top">
-    <svg class="app__icon">
-      <use :xlink:href="mainIcon"></use>
-    </svg>
-    <div class="app__data">
-      <div class="app__temp">13</div>
-      <div class="app__box">
-        <div class="app__summary">
-          {{forecast.weather_descriptions[0]}}
+<div :class="[isLoaded ? 'bg-indigo-500' : 'bg-green-500', 'fixed top-0 left-0 right-0 bottom-0 flex items-center justify-center']">
+  <div class="app" v-if="isLoaded">
+    <div class="app__top">
+      <svg class="app__icon">
+        <use :xlink:href="mainIcon"></use>
+      </svg>
+      <div class="app__data">
+        <div class="app__temp">{{forecast.temperature}}</div>
+        <div class="app__box">
+          <div class="app__summary">
+            {{forecast.weather_descriptions[0]}}
+          </div>
+          <div class="app__location">
+            {{`${location.name}, ${location.country}`}}
+          </div>
         </div>
-        <div class="app__location">
-          {{`${location.name}, ${location.country}`}}
+        <div class="app__date">
+          <span class="app__month">{{ month }}</span>
+          <span class="app__day">{{ day }}</span>
         </div>
-      </div>
-      <div class="app__date">
-        <span class="app__month">January</span>
-        <span class="app__day">1</span>
       </div>
     </div>
     <div class="app__bottom">
@@ -40,9 +42,9 @@
       </div>
     </div>
   </div>
-</div>
-<div class="app" v-else>
-<pacman-loader :loading="true"></pacman-loader>
+  <div class="app" v-else>
+    <pacman-loader :loading="true" :color="'#48bb78'"></pacman-loader>
+  </div>
 </div>
 </template>
 
@@ -125,10 +127,16 @@ export default {
       ? code2icon[weather_code][0]
       : code2icon[weather_code][1]
     },
+    day() {
+      return dayjs().date()
+    },
+    month() {
+      return dayjs().format('MMMM')
+    },
   },
   async mounted() {
-    // const coords = await this.getCoords()
-    // await this.getForecast(coords)
+    const coords = await this.getCoords()
+    await this.getForecast(coords)
   },
   methods: {
     async getCoords() {
@@ -199,21 +207,7 @@ export default {
 <style>
 /* https://tailwindcss.com/docs/installation#include-tailwind-in-your-css */
 @import "tailwindcss/tailwind.css";
-body {
-  height: 100vh;
-  background: #5dc596;
-  padding: 0 8px;
-  margin: 0;
-  display: -webkit-box;
-  display: -ms-flexbox;
-  display: flex;
-  -webkit-box-pack: center;
-  -ms-flex-pack: center;
-  justify-content: center;
-  -webkit-box-align: center;
-  -ms-flex-align: center;
-  align-items: center;
-}
+
 .swal2-modal,
 button {
   font-family: Montserrat, sans-serif;
@@ -241,6 +235,7 @@ button {
   justify-content: center;
 }
 .app__top {
+  width: 100%;
   height: 20.5em;
   background-color: #f1f8f9;
   border-top-left-radius: 0.625em;
@@ -334,6 +329,7 @@ button {
   font-size: 1.125em;
 }
 .app__bottom {
+  width: 100%;
   color: #fff;
   font-size: 0.875em;
   font-family: Montserrat, sans-serif;
