@@ -1,5 +1,8 @@
 <template>
 <div :class="[isLoaded ? 'bg-indigo-500' : 'bg-green-500', 'fixed top-0 left-0 right-0 bottom-0 flex items-center justify-center']">
+  <div :class="[isPreviousResultMessageShown ? 'block' : 'hidden' ,'absolute bg-white w-full top-0 text-center text-grey-900 py-1']">
+    The previous successful resut is shown
+  </div>
   <div class="app" v-if="isLoaded">
     <div class="app__top">
       <svg class="app__icon">
@@ -114,6 +117,7 @@ export default {
       location: null,
       forecast: null,
       resetTime: null,
+      isPreviousResultMessageShown: false,
     }
   },
   computed: {
@@ -139,6 +143,12 @@ export default {
     await this.getForecast(coords)
   },
   methods: {
+    showPreviousResultMessage() {
+      this.isPreviousResultMessageShown = true
+    },
+    hidePreviousResultMessage() {
+      this.isPreviousResultMessageShown = false
+    },
     async getCoords() {
       try {
         const {data: coords} = await this.axios.get(`https://ipinfo.io/loc?token=${process.env.VUE_APP_IPINFO_ACCESS_TOKEN}`)
@@ -173,7 +183,11 @@ export default {
             // confirmButtonText: 'Ok, i got it (:'
           })
 
-          // this.displayInfo(JSON.parse(sessionStorage.getItem('weather')))
+          const location = JSON.parse(sessionStorage.getItem('location'))
+          const forecast = JSON.parse(sessionStorage.getItem('forecast'))
+
+          this.showPreviousResultMessage()
+          this.displayInfo({location, forecast})
         }
       }
     },
@@ -181,19 +195,6 @@ export default {
       this.location = data.location
       this.forecast = data.forecast
       this.resetTime = data.resetTime
-      // this.temperature = Math.round(cur.temperature)
-      // this.summary = cur.summary
-      // this.humidity.val = (cur.humidity * 100).toFixed()
-      // this.cloudcover.val = (cur.cloudCover * 100).toFixed()
-
-      // const date = new Date(cur.time * 1000)
-
-      // this.date = {
-      //   month: date.toDateString().split(' ')[1],
-      //   day: date.getDate()
-      // }
-
-      // this.icon = cur.icon
     },
 
     storeInfo(data) {
