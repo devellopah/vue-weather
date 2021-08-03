@@ -1,9 +1,9 @@
 <template>
-<div :class="[isLoaded ? 'bg-indigo-500' : 'bg-green-500', 'fixed top-0 left-0 right-0 bottom-0 flex items-center justify-center']">
+<div :class="[isLoaded ? 'bg-indigo-500' : '', 'fixed top-0 left-0 right-0 bottom-0 flex items-center justify-center']">
   <div :class="[isPreviousResultMessageShown ? 'block' : 'hidden' ,'absolute bg-white w-full top-0 text-center text-grey-900 py-1']">
-    The previous successful resut is shown
+    The recent successful resut is shown
   </div>
-  <div class="app" v-if="isLoaded">
+  <div class="app mx-4" v-if="isLoaded">
     <div class="app__top">
       <svg class="app__icon">
         <use :xlink:href="mainIcon"></use>
@@ -45,67 +45,19 @@
       </div>
     </div>
   </div>
-  <div class="app" v-else>
-    <pacman-loader :loading="true" :color="'#48bb78'"></pacman-loader>
-  </div>
+  <pacman-loader :color="loader.color" v-else></pacman-loader>
 </div>
 </template>
 
 <script>
 import PacmanLoader from 'vue-spinner/src/PacmanLoader.vue'
 import dayjs from 'dayjs'
+import resolveConfig from 'tailwindcss/resolveConfig'
+import tailwindConfig from '../tailwind.config.js'
 
-const code2icon = {
-  113: ['#day', '#night'],
-  116: ['#cloudy-day-1', '#cloudy-night-1'],
-  119: ['#cloudy-day-2', '#cloudy-night-2'],
-  122: ['#cloudy-day-3', '#cloudy-night-3'],
-  143: ['#fog'],
-  176: ['#rainy-2', '#rainy-4'],
-  179: ['#snowy-2', '#snowy-4'],
-  182: ['#sleet'],
-  185: ['#sleet'],
-  200: ['#thunder'],
-  227: ['#snow-4'],
-  230: ['#snow-5'],
-  248: ['#fog'],
-  260: ['#fog'],
-  263: ['#rainy-2', '#rainy-4'],
-  266: ['#rainy-2', '#rainy-4'],
-  281: ['#sleet'],
-  284: ['#sleet'],
-  293: ['#rainy-4'],
-  296: ['#rainy-4'],
-  299: ['#rainy-3', '#rainy-5'],
-  302: ['#rainy-5'],
-  305: ['#rainy-3', '#rainy-5'],
-  308: ['#rainy-5'],
-  311: ['#rainy-2', '#rainy-4'],
-  314: ['#rainy-5'],
-  317: ['#rainy-4'],
-  320: ['#rainy-5'],
-  // snow
-  323: ['#snowy-2', '#snowy-4'],
-  326: ['#snowy-2', '#snowy-4'],
-  329: ['#snowy-5'],
-  332: ['#snowy-5'],
-  335: ['#snowy-1', '#snowy-5'],
-  338: ['#snowy-5'],
-  350: ['#snowy-4'],
-  353: ['#rainy-2', '#rainy-4'],
-  356: ['#rainy-1', '#rainy-5'],
-  359: ['#rainy-5'],
-  362: ['#rainy-2', '#rainy-4'],
-  365: ['#rainy-1', '#rainy-5'],
-  368: ['#snowy-2', '#snowy-4'],
-  371: ['#snowy-1', '#snowy-5'],
-  374: ['#snowy-2', '#snowy-4'],
-  377: ['#snowy-4'],
-  386: ['#thunder'],
-  389: ['#thunder'],
-  392: ['#thunder'],
-  395: ['#thunder'],
-}
+import code2icon from './code2icon'
+
+const fullConfig = resolveConfig(tailwindConfig)
 
 export default {
   name: 'App',
@@ -118,6 +70,9 @@ export default {
       forecast: null,
       resetTime: null,
       isPreviousResultMessageShown: false,
+      loader: {
+        color: fullConfig.theme.backgroundColor.green['500'],
+      },
     }
   },
   computed: {
@@ -205,7 +160,7 @@ export default {
 }
 </script>
 
-<style>
+<style lang="postcss">
 /* https://tailwindcss.com/docs/installation#include-tailwind-in-your-css */
 @import "tailwindcss/tailwind.css";
 
@@ -214,120 +169,64 @@ button {
   font-family: Montserrat, sans-serif;
 }
 .swal2-modal .swal2-styled {
-  padding-left: 20px;
-  padding-right: 20px;
+  @apply px-5;
 }
 .app {
-  width: 100%;
+  @apply w-full flex flex-col items-center justify-center;
   max-width: 24.3125em;
-  height: 29em;
-  background: azure;
   -webkit-box-shadow: 10px 18px 20px 1px rgba(0, 0, 0, 0.15);
   box-shadow: 10px 18px 20px 1px rgba(0, 0, 0, 0.15);
   border-radius: 0.625em;
-  display: -webkit-box;
-  display: -ms-flexbox;
-  display: flex;
-  -webkit-box-orient: vertical;
-  -webkit-box-direction: normal;
-  -ms-flex-direction: column;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
 }
 .app__top {
-  width: 100%;
-  height: 20.5em;
-  background-color: #f1f8f9;
+  @apply w-full bg-gray-100 relative;
   border-top-left-radius: 0.625em;
   border-top-right-radius: 0.625em;
-  position: relative;
 }
 .app__icon {
-  width: 15.625em;
-  height: 15.625em;
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  -webkit-transform: translate(-50%, -65%);
-  transform: translate(-50%, -65%);
+  @apply w-64 h-64 mx-auto;
 }
 .app__data {
-  height: 4.375em;
-  width: 100%;
-  display: -webkit-box;
-  display: -ms-flexbox;
-  display: flex;
-  -webkit-box-align: center;
-  -ms-flex-align: center;
-  align-items: center;
-  position: absolute;
-  bottom: 1.25em;
+  @apply w-full flex items-center relative
 }
 .app__temp {
-  color: #8d9396;
-  font-size: 3.5em;
-  font-weight: 300;
+  @apply text-6xl inline-block relative leading-tight font-light text-gray-600;
   font-family: Montserrat, sans-serif;
   padding: 0 0.357142857142857em;
-  display: inline-block;
-  position: relative;
 }
 .app__temp:after {
+  @apply border-gray-600 border-solid absolute right-0 rounded-full;
   content: "";
-  position: absolute;
-  right: 0;
   top: 0.267857142857143em;
   width: 0.178571428571429em;
   height: 0.178571428571429em;
-  border: 0.017857142857143em solid #8d9396;
-  border-radius: 50%;
+  border-width: 0.017857142857143em;
 }
 .app__box {
+  @apply leading-normal;
   margin-left: 0.9375em;
-  line-height: normal;
 }
 .app__summary {
-  color: #bac2c6;
-  font-size: 1.5em;
-  font-weight: 300;
+  @apply text-gray-600 font-light text-2xl;
 }
 .app__location,
 .app__summary {
   font-family: Source Sans Pro, sans-serif;
 }
 .app__location {
-  color: #a2aaad;
-  font-weight: 600;
+  @apply font-semibold text-gray-700;
 }
 .app__date {
-  height: 100%;
+  @apply h-full text-white bg-blue-500 font-bold uppercase;
+  @apply ml-auto flex flex-col items-center justify-center absolute right-0 top-0 bottom-0;
   min-width: 4.0625em;
-  color: #fff;
-  background-color: #54bae6;
   font-family: Open Sans, sans-serif;
-  font-weight: 700;
-  text-transform: uppercase;
-  margin-left: auto;
-  display: -webkit-box;
-  display: -ms-flexbox;
-  display: flex;
-  -webkit-box-orient: vertical;
-  -webkit-box-direction: normal;
-  -ms-flex-direction: column;
-  flex-direction: column;
-  -webkit-box-align: center;
-  -ms-flex-align: center;
-  align-items: center;
-  -webkit-box-pack: center;
-  -ms-flex-pack: center;
-  justify-content: center;
 }
 .app__month {
-  font-size: 0.875em;
+  @apply text-sm;
 }
 .app__day {
-  font-size: 1.125em;
+  @apply text-lg;
 }
 .app__bottom {
   width: 100%;
