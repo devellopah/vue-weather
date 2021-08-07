@@ -4,41 +4,41 @@
     The recent successful resut is shown
   </div>
   <div class="app mx-4" v-if="isLoaded">
-    <div class="app__top">
-      <svg class="app__icon">
+    <div class="w-full bg-gray-100 relative rounded-t-lg">
+      <svg class="w-64 h-64 mx-auto">
         <use :xlink:href="mainIcon"></use>
       </svg>
-      <div class="app__data">
+      <div class="w-full flex items-center relative">
         <div class="app__temp">{{forecast.temperature}}</div>
-        <div class="app__box">
-          <div class="app__summary">
+        <div class="leading-normal ml-4">
+          <div class="text-gray-600 font-light text-2xl">
             {{forecast.weather_descriptions[0]}}
           </div>
-          <div class="app__location">
+          <div class="font-semibold text-gray-700">
             {{`${location.name}, ${location.country}`}}
           </div>
         </div>
         <div class="app__date">
-          <span class="app__month">{{ month }}</span>
-          <span class="app__day">{{ day }}</span>
+          <span class="text-sm">{{ month }}</span>
+          <span class="text-lg">{{ day }}</span>
         </div>
       </div>
     </div>
-    <div class="app__bottom">
-      <div class="meta-block app__meta">
-        <svg class="meta-block__icon" width="30" height="19">
+    <div class="app__bottom sm:px-12">
+      <div class="meta-block flex items-center">
+        <svg class="mr-4" width="30" height="19">
           <use xlink:href="#wind-speed"></use>
         </svg>
         <span>{{forecast.wind_speed}}</span><span>KM/H</span>
       </div>
-      <div class="meta-block app__meta">
-        <svg class="meta-block__icon" width="16" height="20">
+      <div class="meta-block flex items-center">
+        <svg class="mr-4" width="16" height="20">
           <use xlink:href="#humidity"></use>
         </svg>
         <span>{{forecast.humidity}}</span><span>%</span>
       </div>
-      <div class="meta-block app__meta">
-        <svg class="meta-block__icon" width="22" height="22">
+      <div class="meta-block flex items-center">
+        <svg class="mr-4" width="22" height="22">
           <use xlink:href="#cloudiness"></use>
         </svg>
         <span>{{forecast.cloudcover}}</span><span>%</span>
@@ -172,27 +172,14 @@ button {
   @apply px-5;
 }
 .app {
-  @apply w-full flex flex-col items-center justify-center;
+  @apply w-full flex flex-col items-center justify-center rounded-lg;
   max-width: 24.3125em;
   -webkit-box-shadow: 10px 18px 20px 1px rgba(0, 0, 0, 0.15);
   box-shadow: 10px 18px 20px 1px rgba(0, 0, 0, 0.15);
-  border-radius: 0.625em;
-}
-.app__top {
-  @apply w-full bg-gray-100 relative;
-  border-top-left-radius: 0.625em;
-  border-top-right-radius: 0.625em;
-}
-.app__icon {
-  @apply w-64 h-64 mx-auto;
-}
-.app__data {
-  @apply w-full flex items-center relative
 }
 .app__temp {
-  @apply text-6xl inline-block relative leading-tight font-light text-gray-600;
+  @apply text-6xl inline-block relative leading-tight font-light text-gray-600 px-2;
   font-family: Montserrat, sans-serif;
-  padding: 0 0.357142857142857em;
 }
 .app__temp:after {
   @apply border-gray-600 border-solid absolute right-0 rounded-full;
@@ -202,19 +189,9 @@ button {
   height: 0.178571428571429em;
   border-width: 0.017857142857143em;
 }
-.app__box {
-  @apply leading-normal;
-  margin-left: 0.9375em;
-}
-.app__summary {
-  @apply text-gray-600 font-light text-2xl;
-}
 .app__location,
 .app__summary {
   font-family: Source Sans Pro, sans-serif;
-}
-.app__location {
-  @apply font-semibold text-gray-700;
 }
 .app__date {
   @apply h-full text-white bg-blue-500 font-bold uppercase;
@@ -222,50 +199,9 @@ button {
   min-width: 4.0625em;
   font-family: Open Sans, sans-serif;
 }
-.app__month {
-  @apply text-sm;
-}
-.app__day {
-  @apply text-lg;
-}
 .app__bottom {
-  width: 100%;
-  color: #fff;
-  font-size: 0.875em;
+  @apply w-full text-white text-sm font-bold bg-gray-900 rounded-b-xl;
+  @apply flex items-start justify-between flex-grow py-12 px-4;
   font-family: Montserrat, sans-serif;
-  font-weight: 700;
-  background-color: #2e3335;
-  border-bottom-left-radius: 0.714285714285714em;
-  border-bottom-right-radius: 0.714285714285714em;
-  padding: 3em 1em;
-  display: -webkit-box;
-  display: -ms-flexbox;
-  display: flex;
-  -webkit-box-pack: justify;
-  -ms-flex-pack: justify;
-  justify-content: space-between;
-  -webkit-box-align: start;
-  -ms-flex-align: start;
-  align-items: flex-start;
-  -webkit-box-flex: 1;
-  -ms-flex-positive: 1;
-  flex-grow: 1;
-}
-@media (min-width: 576px) {
-  .app__bottom {
-    padding-left: 3em;
-    padding-right: 3em;
-  }
-}
-.app__meta {
-  display: -webkit-box;
-  display: -ms-flexbox;
-  display: flex;
-  -webkit-box-align: center;
-  -ms-flex-align: center;
-  align-items: center;
-}
-.meta-block__icon {
-  margin-right: 1em;
 }
 </style>
