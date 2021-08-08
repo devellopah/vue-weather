@@ -15,7 +15,13 @@ module.exports = {
     ]
   },
   theme: {
-    extend: {},
+    extend: {
+      fontFamily: {
+        montserrat: ['Montserrat', 'sans-serif'],
+        sspro: ['Source Sans Pro', 'sans-serif'],
+        opensans: ['Open Sans', 'sans-serif'],
+      }
+    },
   },
   variants: {},
   plugins: [],

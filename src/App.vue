@@ -11,10 +11,10 @@
       <div class="w-full flex items-center relative">
         <div class="app__temp">{{forecast.temperature}}</div>
         <div class="leading-normal ml-4">
-          <div class="text-gray-600 font-light text-2xl">
+          <div class="text-gray-600 font-light text-xl">
             {{forecast.weather_descriptions[0]}}
           </div>
-          <div class="font-semibold text-gray-700">
+          <div class="font-semibold text-gray-700 text-sm">
             {{`${location.name}, ${location.country}`}}
           </div>
         </div>
@@ -55,7 +55,7 @@ import dayjs from 'dayjs'
 import resolveConfig from 'tailwindcss/resolveConfig'
 import tailwindConfig from '../tailwind.config.js'
 
-import code2icon from './code2icon'
+import icons from './icons'
 
 const fullConfig = resolveConfig(tailwindConfig)
 
@@ -82,9 +82,9 @@ export default {
     mainIcon() {
       const { weather_code, is_day } = this.forecast
 
-      return is_day == 'yes' || code2icon[weather_code].length === 1
-      ? code2icon[weather_code][0]
-      : code2icon[weather_code][1]
+      return is_day == 'yes' || icons[weather_code].length === 1
+      ? icons[weather_code][0]
+      : icons[weather_code][1]
     },
     day() {
       return dayjs().date()
@@ -166,42 +166,34 @@ export default {
 
 .swal2-modal,
 button {
-  font-family: Montserrat, sans-serif;
+  @apply font-montserrat;
 }
 .swal2-modal .swal2-styled {
   @apply px-5;
 }
 .app {
-  @apply w-full flex flex-col items-center justify-center rounded-lg;
-  max-width: 24.3125em;
-  -webkit-box-shadow: 10px 18px 20px 1px rgba(0, 0, 0, 0.15);
-  box-shadow: 10px 18px 20px 1px rgba(0, 0, 0, 0.15);
+  @apply w-full flex flex-col items-center justify-center rounded-lg shadow-2xl;
+  max-width: 25rem;
 }
 .app__temp {
-  @apply text-6xl inline-block relative leading-tight font-light text-gray-600 px-2;
-  font-family: Montserrat, sans-serif;
+  @apply font-montserrat text-5xl inline-block relative leading-tight font-light text-gray-600 px-2;
 }
 .app__temp:after {
-  @apply border-gray-600 border-solid absolute right-0 rounded-full;
+  @apply w-2 h-2 border-gray-600 border absolute right-0 rounded-full;
   content: "";
-  top: 0.267857142857143em;
-  width: 0.178571428571429em;
-  height: 0.178571428571429em;
-  border-width: 0.017857142857143em;
+  top: 0.75rem;
 }
 .app__location,
 .app__summary {
-  font-family: Source Sans Pro, sans-serif;
+  @apply font-sspro;
 }
 .app__date {
-  @apply h-full text-white bg-blue-500 font-bold uppercase;
-  @apply ml-auto flex flex-col items-center justify-center absolute right-0 top-0 bottom-0;
-  min-width: 4.0625em;
-  font-family: Open Sans, sans-serif;
+  @apply font-opensans text-white bg-blue-500 font-bold uppercase;
+  @apply ml-auto flex flex-col items-center justify-center absolute right-0 top-0 bottom-0 p-2;
+  min-width: 4rem;
 }
 .app__bottom {
-  @apply w-full text-white text-sm font-bold bg-gray-900 rounded-b-xl;
+  @apply font-montserrat w-full text-white text-sm font-bold bg-gray-900 rounded-b-xl;
   @apply flex items-start justify-between flex-grow py-12 px-4;
-  font-family: Montserrat, sans-serif;
 }
 </style>
