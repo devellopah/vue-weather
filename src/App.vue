@@ -3,41 +3,41 @@
   <div :class="[isPreviousResultMessageShown ? 'block' : 'hidden' ,'absolute bg-white w-full top-0 text-center text-grey-900 py-1']">
     The recent successful resut is shown
   </div>
-  <div class="app mx-4" v-if="isLoaded">
+  <div class="w-full flex flex-col items-center justify-center rounded-lg shadow-2xl mx-4" style="max-width: 25rem;" v-if="isLoaded">
     <div class="w-full bg-gray-100 relative rounded-t-lg">
       <svg class="w-64 h-64 mx-auto">
         <use :xlink:href="mainIcon"></use>
       </svg>
       <div class="w-full flex items-center relative">
-        <div class="app__temp">{{forecast.temperature}}</div>
+        <div class="temperature font-montserrat text-5xl inline-block relative leading-tight font-light text-gray-600 px-2">{{forecast.temperature}}</div>
         <div class="leading-normal ml-4">
-          <div class="text-gray-600 font-light text-xl">
+          <div class="text-gray-600 font-light text-xl font-sspro">
             {{forecast.weather_descriptions[0]}}
           </div>
-          <div class="font-semibold text-gray-700 text-sm">
+          <div class="font-semibold text-gray-700 text-sm font-sspro">
             {{`${location.name}, ${location.country}`}}
           </div>
         </div>
-        <div class="app__date">
+        <div style="min-width: 4rem;" class="font-opensans text-white bg-blue-500 font-bold uppercase ml-auto flex flex-col items-center justify-center absolute right-0 top-0 bottom-0 p-2">
           <span class="text-sm">{{ month }}</span>
           <span class="text-lg">{{ day }}</span>
         </div>
       </div>
     </div>
-    <div class="app__bottom sm:px-12">
-      <div class="meta-block flex items-center">
+    <div class="font-montserrat w-full text-white text-sm font-bold bg-gray-900 rounded-b-xl flex items-start justify-between flex-grow py-12 px-4 sm:px-12">
+      <div class="flex items-center">
         <svg class="mr-4" width="30" height="19">
           <use xlink:href="#wind-speed"></use>
         </svg>
         <span>{{forecast.wind_speed}}</span><span>KM/H</span>
       </div>
-      <div class="meta-block flex items-center">
+      <div class="flex items-center">
         <svg class="mr-4" width="16" height="20">
           <use xlink:href="#humidity"></use>
         </svg>
         <span>{{forecast.humidity}}</span><span>%</span>
       </div>
-      <div class="meta-block flex items-center">
+      <div class="flex items-center">
         <svg class="mr-4" width="22" height="22">
           <use xlink:href="#cloudiness"></use>
         </svg>
@@ -171,29 +171,9 @@ button {
 .swal2-modal .swal2-styled {
   @apply px-5;
 }
-.app {
-  @apply w-full flex flex-col items-center justify-center rounded-lg shadow-2xl;
-  max-width: 25rem;
-}
-.app__temp {
-  @apply font-montserrat text-5xl inline-block relative leading-tight font-light text-gray-600 px-2;
-}
-.app__temp:after {
+.temperature:after {
   @apply w-2 h-2 border-gray-600 border absolute right-0 rounded-full;
   content: "";
   top: 0.75rem;
-}
-.app__location,
-.app__summary {
-  @apply font-sspro;
-}
-.app__date {
-  @apply font-opensans text-white bg-blue-500 font-bold uppercase;
-  @apply ml-auto flex flex-col items-center justify-center absolute right-0 top-0 bottom-0 p-2;
-  min-width: 4rem;
-}
-.app__bottom {
-  @apply font-montserrat w-full text-white text-sm font-bold bg-gray-900 rounded-b-xl;
-  @apply flex items-start justify-between flex-grow py-12 px-4;
 }
 </style>
