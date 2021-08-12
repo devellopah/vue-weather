@@ -8,17 +8,17 @@
       <svg class="w-64 h-64 mx-auto">
         <use :xlink:href="mainIcon"></use>
       </svg>
-      <div class="w-full flex items-center relative">
-        <div class="temperature font-montserrat text-5xl inline-block relative leading-tight font-light text-gray-600 px-2">{{forecast.temperature}}</div>
+      <div class="w-full flex items-center relative mb-4">
+        <div class="temperature font-montserrat text-6xl inline-block relative leading-tight font-light text-gray-600 pl-5 pr-3">{{forecast.temperature}}</div>
         <div class="leading-normal ml-4">
-          <div class="text-gray-600 font-light text-xl font-sspro">
-            {{forecast.weather_descriptions[0]}}
+          <div class="text-gray-600 font-light text-2xl font-sspro">
+            {{ description }}
           </div>
-          <div class="font-semibold text-gray-700 text-sm font-sspro">
+          <div class="font-semibold text-gray-700 text-lg font-sspro">
             {{`${location.name}, ${location.country}`}}
           </div>
         </div>
-        <div style="min-width: 4rem;" class="font-opensans text-white bg-blue-500 font-bold uppercase ml-auto flex flex-col items-center justify-center absolute right-0 top-0 bottom-0 p-2">
+        <div style="min-width: 4rem;" class="font-opensans text-white bg-blue-500 font-bold uppercase ml-auto flex flex-col items-center justify-center h-16 p-2">
           <span class="text-sm">{{ month }}</span>
           <span class="text-lg">{{ day }}</span>
         </div>
@@ -90,7 +90,11 @@ export default {
       return dayjs().date()
     },
     month() {
-      return dayjs().format('MMMM')
+      return dayjs().format('MMM')
+    },
+    description() {
+      const arr = this.forecast.weather_descriptions[0].split(' ')
+      return arr.length > 1 ? arr[0] + ' ' + arr[1] : arr[0]
     },
   },
   async mounted() {
