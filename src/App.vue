@@ -1,9 +1,9 @@
 <template>
-<div :class="[isLoaded ? 'bg-indigo-500' : '', 'fixed top-0 left-0 right-0 bottom-0 flex items-center justify-center']">
+<div :class="[isForecastAvailable ? 'bg-indigo-500' : '', 'fixed top-0 left-0 right-0 bottom-0 flex items-center justify-center']">
   <div :class="[isPreviousResultMessageShown ? 'block' : 'hidden' ,'absolute bg-white w-full top-0 text-center text-grey-900 py-1']">
     The recent successful resut is shown
   </div>
-  <div class="w-full flex flex-col items-center justify-center rounded-lg shadow-2xl mx-4" style="max-width: 25rem;" v-if="isLoaded">
+  <div class="w-full flex flex-col items-center justify-center rounded-lg shadow-2xl mx-4" style="max-width: 25rem;" v-if="isForecastAvailable">
     <div class="w-full bg-gray-100 relative rounded-t-lg">
       <svg class="w-64 h-64 mx-auto">
         <use :xlink:href="mainIcon"></use>
@@ -58,6 +58,7 @@ import tailwindConfig from '../tailwind.config.js'
 import icons from './icons'
 
 const fullConfig = resolveConfig(tailwindConfig)
+const STORAGE_PREFIX = 'vue_weather_'
 
 export default {
   name: 'App',
@@ -76,8 +77,11 @@ export default {
     }
   },
   computed: {
-    isLoaded() {
+    isForecastAvailable() {
       return Boolean(this.forecast)
+    },
+    isCachedForecastAvailable() {
+      return Boolean(JSON.parse(sessionStorage.getItem(STORAGE_PREFIX + 'forecast')))
     },
     mainIcon() {
       const { weather_code, is_day } = this.forecast
@@ -98,8 +102,18 @@ export default {
     },
   },
   async mounted() {
-    const coords = await this.getCoords()
-    await this.getForecast(coords)
+    try {
+      const coords = await this.getCoords()
+      const data = await this.getForecast(coords)
+      this.displayInfo(data)
+      this.cacheInfo(data)
+      console.log('forecast has been cached!')
+    } catch(_) {
+      if(this.isCachedForecastAvailable) {
+        console.log('forecast has been retrieved from cache!')
+        this.displayCachedInfo()
+      }
+    }
   },
   methods: {
     showPreviousResultMessage() {
@@ -127,28 +141,28 @@ export default {
         const url = `${process.env.VUE_APP_WEATHER_API_URL}?coords=${coords}&unit=m`
         const { data } = await this.axios.get(url)
         console.log(data)
-        this.displayInfo(data)
-        this.storeInfo(data)
-
-      } catch ({ response: { status, statusText, data } }) {
-        console.log('error data', data)
-        if (status === 429) {
-          this.resetTime = data.resetTime
-          this.$swal({
-            title: statusText,
-            text: `Try again later in ${dayjs(this.resetTime).diff(dayjs(new Date()), 'minute')} minutes`,
-            icon: 'info',
-            // background: '#f8f8f8',
-            // confirmButtonText: 'Ok, i got it (:'
-          })
-
-          const location = JSON.parse(sessionStorage.getItem('location'))
-          const forecast = JSON.parse(sessionStorage.getItem('forecast'))
-
-          this.showPreviousResultMessage()
-          this.displayInfo({location, forecast})
-        }
+        return data
+      } catch ({ response }) {
+        console.log('response', response)
+        this.handleError(response)
       }
+    },
+    handleError({ statusText, data }) {
+      this.resetTime = data.resetTime
+      this.$swal({
+        title: statusText,
+        text: `Try again later in ${dayjs(this.resetTime).diff(dayjs(new Date()), 'minute')} minutes`,
+        icon: 'error',
+        // background: '#f8f8f8',
+        // confirmButtonText: 'Ok, i got it (:'
+      })
+    },
+    displayCachedInfo() {
+      const location = JSON.parse(sessionStorage.getItem(STORAGE_PREFIX + 'location'))
+      const forecast = JSON.parse(sessionStorage.getItem(STORAGE_PREFIX + 'forecast'))
+
+      this.showPreviousResultMessage()
+      this.displayInfo({location, forecast})
     },
     displayInfo(data) {
       this.location = data.location
@@ -156,9 +170,9 @@ export default {
       this.resetTime = data.resetTime
     },
 
-    storeInfo(data) {
-      sessionStorage.setItem('location', JSON.stringify(data.location))
-      sessionStorage.setItem('forecast', JSON.stringify(data.forecast))
+    cacheInfo(data) {
+      sessionStorage.setItem(STORAGE_PREFIX + 'location', JSON.stringify(data.location))
+      sessionStorage.setItem(STORAGE_PREFIX + 'forecast', JSON.stringify(data.forecast))
     }
   }
 }
