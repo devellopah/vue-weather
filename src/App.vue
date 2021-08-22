@@ -5,23 +5,16 @@
   </div>
   <div class="w-full flex flex-col items-center justify-center rounded-lg shadow-2xl mx-4" style="max-width: 25rem;" v-if="isForecastAvailable">
     <div class="w-full bg-gray-100 relative rounded-t-lg">
-      <svg class="w-64 h-64 mx-auto">
-        <use :xlink:href="mainIcon"></use>
-      </svg>
+
+      <the-icon :icon="icon"/>
+
       <div class="w-full flex items-center relative mb-4">
-        <div class="temperature font-montserrat text-6xl inline-block relative leading-tight font-light text-gray-600 pl-5 pr-3">{{forecast.temperature}}</div>
+        <the-temperature :value="forecast.temperature" />
         <div class="leading-normal ml-4">
-          <div class="text-gray-600 font-light text-2xl font-sspro">
-            {{ description }}
-          </div>
-          <div class="font-semibold text-gray-700 text-lg font-sspro">
-            {{`${location.name}, ${location.country}`}}
-          </div>
+          <the-description :value="description" />
+          <the-location :name="location.name"  :country="location.country" />
         </div>
-        <div style="min-width: 4rem;" class="font-opensans text-white bg-blue-500 font-bold uppercase ml-auto flex flex-col items-center justify-center h-16 p-2">
-          <span class="text-sm">{{ month }}</span>
-          <span class="text-lg">{{ day }}</span>
-        </div>
+        <the-date :month="month" :day="day" />
       </div>
     </div>
     <div class="font-montserrat w-full text-white text-sm font-bold bg-gray-900 rounded-b-xl flex items-start justify-between flex-grow py-12 px-4 sm:px-12">
@@ -57,19 +50,30 @@ import tailwindConfig from '../tailwind.config.js'
 
 import icons from './icons'
 
+import TheIcon from './components/TheIcon.vue'
+import TheTemperature from './components/TheTemperature.vue'
+import TheLocation from './components/TheLocation.vue'
+import TheDescription from './components/TheDescription.vue'
+import TheDate from './components/TheDate.vue'
+
+
 const fullConfig = resolveConfig(tailwindConfig)
 const STORAGE_PREFIX = 'vue_weather_'
 
 export default {
   name: 'App',
   components: {
-    PacmanLoader
+    PacmanLoader,
+    TheIcon,
+    TheTemperature,
+    TheLocation,
+    TheDescription,
+    TheDate,
   },
   data() {
     return {
       location: null,
       forecast: null,
-      resetTime: null,
       isPreviousResultMessageShown: false,
       loader: {
         color: fullConfig.theme.backgroundColor.green['500'],
@@ -83,7 +87,7 @@ export default {
     isCachedForecastAvailable() {
       return Boolean(JSON.parse(sessionStorage.getItem(STORAGE_PREFIX + 'forecast')))
     },
-    mainIcon() {
+    icon() {
       const { weather_code, is_day } = this.forecast
 
       return is_day == 'yes' || icons[weather_code].length === 1
@@ -132,7 +136,6 @@ export default {
             title: data.error.title,
             text: data.error.message,
             icon: 'error',
-            // confirmButtonText: 'Got it'
           })
       }
     },
@@ -147,14 +150,11 @@ export default {
         this.handleError(response)
       }
     },
-    handleError({ statusText, data }) {
-      this.resetTime = data.resetTime
+    handleError({ statusText, data: { resetTime } }) {
       this.$swal({
         title: statusText,
-        text: `Try again later in ${dayjs(this.resetTime).diff(dayjs(new Date()), 'minute')} minutes`,
+        text: `Try again later in ${dayjs(resetTime).diff(dayjs(new Date()), 'minute')} minutes`,
         icon: 'error',
-        // background: '#f8f8f8',
-        // confirmButtonText: 'Ok, i got it (:'
       })
     },
     displayCachedInfo() {
@@ -167,7 +167,6 @@ export default {
     displayInfo(data) {
       this.location = data.location
       this.forecast = data.forecast
-      this.resetTime = data.resetTime
     },
 
     cacheInfo(data) {
