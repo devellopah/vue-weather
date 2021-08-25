@@ -153,7 +153,7 @@ export default {
     handleError({ statusText, data: { resetTime } }) {
       this.$swal({
         title: statusText,
-        text: `Try again later in ${dayjs(resetTime).diff(dayjs(new Date()), 'minute')} minutes`,
+        text: `Try again later in ${dayjs(new Date(resetTime)).diff(dayjs(new Date()), 'minute')} minutes`,
         icon: 'error',
       })
     },
