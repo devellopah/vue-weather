@@ -1,14 +1,15 @@
 <template>
 <div :class="[isForecastAvailable ? 'bg-indigo-500' : '', 'fixed top-0 left-0 right-0 bottom-0 flex items-center justify-center']">
-  <div :class="[isPreviousResultMessageShown ? 'block' : 'hidden' ,'absolute bg-white w-full top-0 text-center text-grey-900 py-1']">
-    The recent successful resut is shown
-  </div>
+<the-message
+  :isRevealed="isPreviousResultMessageShown"
+/>
   <div class="w-full flex flex-col items-center justify-center rounded-lg shadow-2xl mx-4" style="max-width: 25rem;" v-if="isForecastAvailable">
     <div class="w-full bg-gray-100 relative rounded-t-lg">
 
       <the-icon :icon="icon"/>
 
       <div class="w-full flex items-center relative mb-4">
+
         <the-temperature :value="forecast.temperature" />
         <div class="leading-normal ml-4">
           <the-description :value="description" />
@@ -18,24 +19,27 @@
       </div>
     </div>
     <div class="font-montserrat w-full text-white text-sm font-bold bg-gray-900 rounded-b-xl flex items-start justify-between flex-grow py-12 px-4 sm:px-12">
-      <div class="flex items-center">
-        <svg class="mr-4" width="30" height="19">
-          <use xlink:href="#wind-speed"></use>
-        </svg>
-        <span>{{forecast.wind_speed}}</span><span>KM/H</span>
-      </div>
-      <div class="flex items-center">
-        <svg class="mr-4" width="16" height="20">
-          <use xlink:href="#humidity"></use>
-        </svg>
-        <span>{{forecast.humidity}}</span><span>%</span>
-      </div>
-      <div class="flex items-center">
-        <svg class="mr-4" width="22" height="22">
-          <use xlink:href="#cloudiness"></use>
-        </svg>
-        <span>{{forecast.cloudcover}}</span><span>%</span>
-      </div>
+      <the-feature
+        :iconId="'#wind-speed'"
+        :iconWidth="30"
+        :iconHeight="19"
+        :value="forecast.wind_speed"
+        :unit="'KM/H'"
+      />
+      <the-feature
+        :iconId="'#humidity'"
+        :iconWidth="16"
+        :iconHeight="20"
+        :value="forecast.humidity"
+        :unit="'%'"
+      />
+      <the-feature
+        :iconId="'#cloudiness'"
+        :iconWidth="22"
+        :iconHeight="22"
+        :value="forecast.cloudcover"
+        :unit="'%'"
+      />
     </div>
   </div>
   <pacman-loader :color="loader.color" v-else></pacman-loader>
@@ -55,6 +59,10 @@ import TheTemperature from './components/TheTemperature.vue'
 import TheLocation from './components/TheLocation.vue'
 import TheDescription from './components/TheDescription.vue'
 import TheDate from './components/TheDate.vue'
+import TheFeature from './components/TheFeature.vue'
+import TheMessage from './components/TheMessage.vue'
+
+
 
 
 const fullConfig = resolveConfig(tailwindConfig)
@@ -69,6 +77,8 @@ export default {
     TheLocation,
     TheDescription,
     TheDate,
+    TheFeature,
+    TheMessage,
   },
   data() {
     return {
