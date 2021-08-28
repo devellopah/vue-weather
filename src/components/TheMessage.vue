@@ -1,7 +1,7 @@
 <template>
   <transition name="fade">
     <div v-if="!isFaded" :class="[isRevealed ? 'block' : 'hidden' ,'absolute bg-white w-full top-0 text-center text-grey-900 py-1']">
-      The recent successful result is shown
+      The recent successful result is shown below
     </div>
   </transition>
 </template>
@@ -23,7 +23,7 @@ export default {
       if (val) {
         this.timer = setTimeout(() => {
           this.isFaded = true
-        }, 6000)
+        }, 3000)
       }
     }
   },

@@ -165,13 +165,16 @@ export default {
         title: statusText,
         text: `Try again later in ${dayjs(new Date(resetTime)).diff(dayjs(new Date()), 'minute')} minutes`,
         icon: 'error',
+      }).then(result => {
+        if (result.isConfirmed) {
+          this.showPreviousResultMessage()
+        }
       })
     },
     displayCachedInfo() {
       const location = JSON.parse(sessionStorage.getItem(STORAGE_PREFIX + 'location'))
       const forecast = JSON.parse(sessionStorage.getItem(STORAGE_PREFIX + 'forecast'))
 
-      this.showPreviousResultMessage()
       this.displayInfo({location, forecast})
     },
     displayInfo(data) {
