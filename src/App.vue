@@ -8,14 +8,14 @@
 
       <the-icon :icon="icon"/>
 
-      <div class="w-full flex items-center relative mb-4">
+      <div class="w-full flex flex-wrap items-center relative mb-4">
 
         <the-temperature :value="forecast.temperature" />
-        <div class="leading-normal ml-4">
+        <the-date :month="month" :day="day" />
+        <div class="w-full text-center leading-normal ml-4 sm:w-auto sm:order-2">
           <the-description :value="description" />
           <the-location :name="location.name"  :country="location.country" />
         </div>
-        <the-date :month="month" :day="day" />
       </div>
     </div>
     <div class="font-montserrat w-full text-white text-sm font-bold bg-gray-900 rounded-b-xl flex items-start justify-between flex-grow py-12 px-4 sm:px-12">
