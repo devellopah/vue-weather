@@ -117,11 +117,13 @@ export default {
   },
   async mounted() {
     try {
+      console.log('sessionStorage', sessionStorage)
       const coords = await this.getCoords()
       const data = await this.getForecast(coords)
       this.displayInfo(data)
       this.cacheInfo(data)
       console.log('forecast has been cached!')
+      console.log('sessionStorage', sessionStorage)
     } catch(_) {
       if(this.isCachedForecastAvailable) {
         console.log('forecast has been retrieved from cache!')

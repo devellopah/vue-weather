@@ -15,3 +15,6 @@ Vue.config.productionTip = false
 new Vue({
   render: h => h(App),
 }).$mount('#root')
+
+// todo: extract ipinfo key for production
+// todo: configure surge deploy on git push

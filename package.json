@@ -32,7 +32,7 @@
   },
   "git": {
     "scripts": {
-      "pre-push": "npm run build && surge --project dist --domain vue-weather.surge.sh/"
+      "pre-push": "npm run build && surge --project dist --domain vue-weather.surge.sh"
     }
   },
   "eslintConfig": {
