@@ -117,16 +117,12 @@ export default {
   },
   async mounted() {
     try {
-      console.log('sessionStorage', sessionStorage)
       const coords = await this.getCoords()
       const data = await this.getForecast(coords)
       this.displayInfo(data)
       this.cacheInfo(data)
-      console.log('forecast has been cached!')
-      console.log('sessionStorage', sessionStorage)
     } catch(_) {
       if(this.isCachedForecastAvailable) {
-        console.log('forecast has been retrieved from cache!')
         this.displayCachedInfo()
       }
     }
@@ -143,7 +139,6 @@ export default {
         const {data: coords} = await this.axios.get(`https://ipinfo.io/loc?token=${process.env.VUE_APP_IPINFO_ACCESS_TOKEN}`)
         return coords
       } catch ({ response: { data } }) {
-        console.log(data)
           this.$swal({
             title: data.error.title,
             text: data.error.message,
@@ -155,10 +150,8 @@ export default {
       try {
         const url = `${process.env.VUE_APP_WEATHER_API_URL}?coords=${coords}&unit=m`
         const { data } = await this.axios.get(url)
-        console.log(data)
         return data
       } catch ({ response }) {
-        console.log('response', response)
         this.handleError(response)
       }
     },
